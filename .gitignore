@@ -1,0 +1,6 @@
+/env
+/build
+/dist
+/django_easyforms.egg-info
+.DS_Store
+*.pyc

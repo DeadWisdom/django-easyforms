@@ -1,7 +1,9 @@
-from django.forms import Form, ModelForm
+from django.forms.forms import DeclarativeFieldsMetaclass, BaseForm
+from django.forms.models import ModelFormMetaclass, BaseModelForm
+from django.utils import six
 
 
-class EasyForm(Form):
+class EasyFormBase(object):
     """
     An easier way of doing forms so that they take requests instead of blank data.  Also handles
     creating a django message, and can be extended later to do other things like trigger signals.
@@ -53,7 +55,11 @@ class EasyForm(Form):
         return instance
 
 
-class EasyModelForm(EasyForm, ModelForm):
+class EasyForm(EasyFormBase, six.with_metaclass(DeclarativeFieldsMetaclass, BaseForm)):
+    pass
+
+
+class EasyModelForm(EasyFormBase, six.with_metaclass(ModelFormMetaclass, BaseModelForm)):
     """
     EasyForm version for ModelForms.
 
@@ -69,4 +75,4 @@ class EasyModelForm(EasyForm, ModelForm):
             return redirect("post_detail", post.id)
     """
     pass
-    
+
