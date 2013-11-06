@@ -1,10 +1,10 @@
 """
-Django Discourse setup.
+Django Easy Forms setup.
 """
 
 from setuptools import setup, find_packages
 
-setup( name='django-easyforms',
+setup( name='easyforms',
        version='0.1',
        description='Django app for easier forms.',
        author='Brantley Harris',
