@@ -1,6 +1,5 @@
-from django.forms.forms import DeclarativeFieldsMetaclass, BaseForm
-from django.forms.models import ModelFormMetaclass, BaseModelForm
-from django.utils import six
+from django.forms import Form, ModelForm
+from django.contrib import messages
 
 
 class EasyFormBase(object):
@@ -24,11 +23,11 @@ class EasyFormBase(object):
 
     """
     methods = ['post', 'put']
+    message = None
 
     def __init__(self, request, data = None, instance=None, methods=None, **extra):
         self.methods = methods or self.__class__.methods
         self.request = request
-        self.msg = msg
         self.initial = dict(tup for tup in request.GET.items())
 
         for k, v in extra.items():
@@ -39,27 +38,27 @@ class EasyFormBase(object):
             kwargs.update({'instance': instance})
 
         if request.method.lower() in self.methods:
-            super(EasyForm, self).__init__(data or request.POST, request.FILES, **kwargs)
+            super(EasyFormBase, self).__init__(data or request.POST, request.FILES, **kwargs)
         else:
-            super(EasyForm, self).__init__(**kwargs)
+            super(EasyFormBase, self).__init__(**kwargs)
 
     def is_valid(self):
         if self.request.method.lower() not in self.methods:
             return False
-        return super(EasyForm, self).is_valid()
+        return super(EasyFormBase, self).is_valid()
 
     def save(self, message=None):
-        instance = super(EasyForm, self).save()
+        instance = super(EasyFormBase, self).save()
         if not self.request.is_ajax() and message is not None:
-            messages.add_message(self.request, messages.INFO, message)
+            messages.add_message(self.request, messages.INFO, message or self.message)
         return instance
 
 
-class EasyForm(EasyFormBase, six.with_metaclass(DeclarativeFieldsMetaclass, BaseForm)):
+class EasyForm(EasyFormBase, Form):
     pass
 
 
-class EasyModelForm(EasyFormBase, six.with_metaclass(ModelFormMetaclass, BaseModelForm)):
+class EasyModelForm(EasyFormBase, ModelForm):
     """
     EasyForm version for ModelForms.
 
