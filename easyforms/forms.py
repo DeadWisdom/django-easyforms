@@ -47,8 +47,8 @@ class EasyFormBase(object):
             return False
         return super(EasyFormBase, self).is_valid()
 
-    def save(self, message=None):
-        instance = super(EasyFormBase, self).save()
+    def save(self, message=None, commit=True):
+        instance = super(EasyFormBase, self).save(commit=commit)
         if not self.request.is_ajax() and message is not None:
             messages.add_message(self.request, messages.INFO, message or self.message)
         return instance
